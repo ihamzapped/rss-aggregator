@@ -1,22 +1,45 @@
 package main
 
 import (
-	"github.com/go-chi/chi/v5"
-	_ "github.com/joho/godotenv/autoload"
+	"database/sql"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/ihamzapped/rss-aggregator/internal/database"
+	_ "github.com/joho/godotenv/autoload"
+	_ "github.com/lib/pq"
 )
 
 func main() {
 	port := os.Getenv("PORT")
 
 	if port == "" {
-		log.Fatal("No port defined in the env")
+		log.Fatal("PORT not defined in the env")
+	}
+
+	dbUrl := os.Getenv("DB_URL")
+
+	if dbUrl == "" {
+		log.Fatal("DB_URL not defined in the env")
+
+	}
+
+	dbConn, err := sql.Open("postgres", dbUrl)
+
+	if err != nil {
+		log.Fatal("Failed to connect to db: ", err)
+	}
+
+	api := &ApiConfig{
+		DB: database.New(dbConn),
 	}
 
 	router := chi.NewRouter()
 	v1router := chi.NewRouter()
+
+	v1router.Post("/users", api.createUser)
 
 	v1router.Get("/healthz", healthCheck)
 
@@ -29,9 +52,9 @@ func main() {
 		Addr:    ":" + port,
 	}
 
-	log.Printf("Server started on port: %v", port)
+	log.Print("Server started on port: ", port)
 
-	err := server.ListenAndServe()
+	err = server.ListenAndServe()
 
 	if err != nil {
 		log.Fatal(err)

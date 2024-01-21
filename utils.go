@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 )
@@ -29,4 +30,19 @@ func respond(w http.ResponseWriter, status int, payload interface{}) {
 	w.Header().Add("Content-type", "application/json")
 	w.WriteHeader(status)
 	w.Write(dat)
+}
+
+/* Parse json request into the given type */
+func parseReq[T interface{}](w http.ResponseWriter, r *http.Request, body T) (T, error) {
+	decoder := json.NewDecoder(r.Body)
+
+	err := decoder.Decode(&body)
+
+	if err != nil {
+		respondErr(w, http.StatusBadRequest, fmt.Sprintf("Error parsing request: %v", err))
+		return body, err
+	}
+
+	return body, nil
+
 }
