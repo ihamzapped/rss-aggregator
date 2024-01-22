@@ -4,7 +4,6 @@ include .env
 build: 
 	@go build -o ./bin/rssagg
 
-
 run: build
 	@./bin/rssagg
 
@@ -15,4 +14,6 @@ migratedb:
 	@cd ./sql/schema; goose postgres $(DB_URL) up
 
 dropdb:
-	@cd ./sql/schema; goose postgres $(DB_URL) down
+	@cd ./sql/schema; goose postgres $(DB_URL) reset
+
+refreshdb: dropdb migratedb gendb

@@ -2,14 +2,12 @@ package main
 
 import (
 	"database/sql"
-	"log"
-	"net/http"
-	"os"
-
-	"github.com/go-chi/chi/v5"
 	"github.com/ihamzapped/rss-aggregator/internal/database"
 	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/lib/pq"
+	"log"
+	"net/http"
+	"os"
 )
 
 func main() {
@@ -36,20 +34,8 @@ func main() {
 		DB: database.New(dbConn),
 	}
 
-	router := chi.NewRouter()
-	v1router := chi.NewRouter()
-
-	v1router.Post("/users", api.handleCreateUser)
-	v1router.Get("/users", api.handleGetUser)
-
-	v1router.Get("/healthz", healthCheck)
-
-	v1router.Get("/err", errCheck)
-
-	router.Mount("/v1", v1router)
-
 	server := &http.Server{
-		Handler: router,
+		Handler: api.initRoutes(),
 		Addr:    ":" + port,
 	}
 
