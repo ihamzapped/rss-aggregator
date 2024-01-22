@@ -2,10 +2,9 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-
 	"github.com/ihamzapped/rss-aggregator/internal/auth"
 	"github.com/ihamzapped/rss-aggregator/internal/database"
+	"net/http"
 )
 
 type authedHandler func(http.ResponseWriter, *http.Request, database.User)

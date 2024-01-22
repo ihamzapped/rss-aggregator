@@ -2,7 +2,7 @@
 include .env
 
 build: 
-	@go build -o ./bin/rssagg
+	@go build -o ./bin/rssagg ./cmd
 
 run: build
 	@./bin/rssagg

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/ihamzapped/rss-aggregator/internal/database"
-	db "github.com/ihamzapped/rss-aggregator/internal/database"
 	"net/http"
 )
 
@@ -28,7 +27,7 @@ func (api *ApiConfig) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := api.DB.CreateUser(r.Context(), db.CreateUserParams{
+	user, err := api.DB.CreateUser(r.Context(), database.CreateUserParams{
 		ID:   uuid.New(),
 		Name: params.Name,
 	})
@@ -58,7 +57,7 @@ func (api *ApiConfig) handleCreateFeed(w http.ResponseWriter, r *http.Request, u
 		return
 	}
 
-	feed, err := api.DB.CreateFeed(r.Context(), db.CreateFeedParams{
+	feed, err := api.DB.CreateFeed(r.Context(), database.CreateFeedParams{
 		ID:     uuid.New(),
 		Url:    params.Url,
 		Name:   params.Name,
