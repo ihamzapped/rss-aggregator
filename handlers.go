@@ -72,3 +72,14 @@ func (api *ApiConfig) handleCreateFeed(w http.ResponseWriter, r *http.Request, u
 
 	respond(w, http.StatusCreated, feed)
 }
+
+func (api *ApiConfig) handleGetAllFeeds(w http.ResponseWriter, r *http.Request) {
+	feeds, err := api.DB.GetAllFeeds(r.Context())
+
+	if err != nil {
+		respondErr(w, http.StatusBadRequest, fmt.Sprintf("%v", err))
+		return
+	}
+
+	respond(w, http.StatusOK, feeds)
+}

@@ -10,7 +10,8 @@ func (api *ApiConfig) initRoutes() *chi.Mux {
 	v1router.Post("/users", api.handleCreateUser)
 	v1router.Get("/users", api.middlewareAuth(api.handleGetUser))
 
-	v1router.Post("/feeds", api.middlewareAuth(api.handleCreateFeed))
+	v1router.Get("/feeds", api.handleGetAllFeeds)
+	v1router.Post("/feed", api.middlewareAuth(api.handleCreateFeed))
 
 	v1router.Get("/healthz", healthCheck)
 
