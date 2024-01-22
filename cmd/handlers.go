@@ -82,3 +82,41 @@ func (api *ApiConfig) handleGetAllFeeds(w http.ResponseWriter, r *http.Request) 
 
 	respond(w, http.StatusOK, feeds)
 }
+
+func (api *ApiConfig) handleCreateFeedFollow(w http.ResponseWriter, r *http.Request, user database.User) {
+
+	type body struct {
+		Feed_id uuid.UUID `json:"feed_id"`
+	}
+
+	params, err := parseReq(w, r, body{})
+
+	if err != nil {
+		return
+	}
+
+	feed, err := api.DB.CreateFeedFollow(r.Context(), database.CreateFeedFollowParams{
+		ID:     uuid.New(),
+		FeedID: params.Feed_id,
+		UserID: user.ID,
+	})
+
+	if err != nil {
+		respondErr(w, http.StatusBadRequest, fmt.Sprintf("Could not create follow: %v", err))
+		return
+	}
+
+	respond(w, http.StatusCreated, feed)
+}
+
+func (api *ApiConfig) handleGetUserFollows(w http.ResponseWriter, r *http.Request, user database.User) {
+
+	follows, err := api.DB.GetUserFollows(r.Context(), user.ID)
+
+	if err != nil {
+		respondErr(w, http.StatusBadRequest, fmt.Sprintf("Could not fetch: %v", err))
+		return
+	}
+
+	respond(w, http.StatusOK, follows)
+}
