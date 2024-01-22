@@ -15,6 +15,7 @@ func (api *ApiConfig) initRoutes() *chi.Mux {
 
 	v1router.Post("/feed-follows", api.middlewareAuth(api.handleCreateFeedFollow))
 	v1router.Get("/feed-follows", api.middlewareAuth(api.handleGetUserFollows))
+	v1router.Delete("/feed-follows/{follow_id}", api.middlewareAuth(api.handleDeleteUserFollow))
 
 	v1router.Get("/healthz", healthCheck)
 

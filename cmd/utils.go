@@ -33,7 +33,7 @@ func respond(w http.ResponseWriter, status int, payload interface{}) {
 }
 
 /* Parse json request into the given type */
-func parseReq[T interface{}](w http.ResponseWriter, r *http.Request, body T) (T, error) {
+func parseBody[T interface{}](w http.ResponseWriter, r *http.Request, body T) (T, error) {
 	decoder := json.NewDecoder(r.Body)
 
 	err := decoder.Decode(&body)

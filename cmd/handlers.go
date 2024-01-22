@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/ihamzapped/rss-aggregator/internal/database"
 	"net/http"
@@ -21,7 +22,7 @@ func (api *ApiConfig) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 		Name string `json:"name"`
 	}
 
-	params, err := parseReq(w, r, body{})
+	params, err := parseBody(w, r, body{})
 
 	if err != nil {
 		return
@@ -51,7 +52,7 @@ func (api *ApiConfig) handleCreateFeed(w http.ResponseWriter, r *http.Request, u
 		Url  string `json:"url"`
 	}
 
-	params, err := parseReq(w, r, body{})
+	params, err := parseBody(w, r, body{})
 
 	if err != nil {
 		return
@@ -89,7 +90,7 @@ func (api *ApiConfig) handleCreateFeedFollow(w http.ResponseWriter, r *http.Requ
 		Feed_id uuid.UUID `json:"feed_id"`
 	}
 
-	params, err := parseReq(w, r, body{})
+	params, err := parseBody(w, r, body{})
 
 	if err != nil {
 		return
@@ -119,4 +120,27 @@ func (api *ApiConfig) handleGetUserFollows(w http.ResponseWriter, r *http.Reques
 	}
 
 	respond(w, http.StatusOK, follows)
+}
+
+func (api *ApiConfig) handleDeleteUserFollow(w http.ResponseWriter, r *http.Request, user database.User) {
+
+	followIDStr := chi.URLParam(r, "follow_id")
+	followID, err := uuid.Parse(followIDStr)
+
+	if err != nil {
+		respondErr(w, http.StatusBadRequest, fmt.Sprintf("Could not delete follow: %v", err))
+		return
+	}
+
+	err = api.DB.DeleteFollow(r.Context(), database.DeleteFollowParams{
+		ID:     followID,
+		UserID: user.ID,
+	})
+
+	if err != nil {
+		respondErr(w, http.StatusBadRequest, fmt.Sprintf("Could not delete follow: %v", err))
+		return
+	}
+
+	respond(w, http.StatusOK, struct{}{})
 }
