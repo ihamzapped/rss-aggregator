@@ -2,9 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"time"
 )
 
 /* Json-ify the err response */
@@ -44,5 +47,37 @@ func parseBody[T interface{}](w http.ResponseWriter, r *http.Request, body T) (T
 	}
 
 	return body, nil
+
+}
+
+/* parse xml file to rssfeed type */
+func urlToFeed(url string) (RssFeed, error) {
+	httpClient := http.Client{
+		Timeout: 10 * time.Second,
+	}
+
+	resp, err := httpClient.Get(url)
+
+	if err != nil {
+		return RssFeed{}, err
+	}
+
+	defer resp.Body.Close()
+
+	dat, err := io.ReadAll(resp.Body)
+
+	if err != nil {
+		return RssFeed{}, err
+	}
+
+	feed := RssFeed{}
+
+	err = xml.Unmarshal(dat, &feed)
+
+	if err != nil {
+		return RssFeed{}, err
+	}
+
+	return feed, nil
 
 }

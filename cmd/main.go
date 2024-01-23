@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 func main() {
@@ -40,6 +41,8 @@ func main() {
 	}
 
 	log.Print("Server started on port: ", port)
+
+	go startScraping(api.DB, 10, time.Minute)
 
 	err = server.ListenAndServe()
 
