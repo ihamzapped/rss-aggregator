@@ -3,13 +3,12 @@ package main
 import (
 	"context"
 	"database/sql"
+	"github.com/google/uuid"
+	"github.com/ihamzapped/rss-aggregator/internal/database"
 	"log"
 	"strings"
 	"sync"
 	"time"
-
-	"github.com/google/uuid"
-	"github.com/ihamzapped/rss-aggregator/internal/database"
 )
 
 func startScraping(db *database.Queries, concurrency int, timeBetweenReq time.Duration) {

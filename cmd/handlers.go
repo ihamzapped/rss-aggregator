@@ -144,3 +144,18 @@ func (api *ApiConfig) handleDeleteUserFollow(w http.ResponseWriter, r *http.Requ
 
 	respond(w, http.StatusOK, struct{}{})
 }
+
+func (api *ApiConfig) handleGetPostsForUser(w http.ResponseWriter, r *http.Request, user database.User) {
+
+	posts, err := api.DB.GetPostsForUser(r.Context(), database.GetPostsForUserParams{
+		UserID: user.ID,
+		Limit:  5,
+	})
+
+	if err != nil {
+		respondErr(w, http.StatusBadRequest, fmt.Sprintf("Could not delete follow: %v", err))
+		return
+	}
+
+	respond(w, http.StatusOK, posts)
+}
