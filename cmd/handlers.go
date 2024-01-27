@@ -81,7 +81,7 @@ func (api *ApiConfig) handleGetAllFeeds(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	respond(w, http.StatusOK, feeds)
+	respond(w, http.StatusOK, createFeedsResponse(feeds))
 }
 
 func (api *ApiConfig) handleCreateFeedFollow(w http.ResponseWriter, r *http.Request, user database.User) {
@@ -157,5 +157,5 @@ func (api *ApiConfig) handleGetPostsForUser(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	respond(w, http.StatusOK, posts)
+	respond(w, http.StatusOK, createPostsResponse(posts))
 }

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"github.com/ihamzapped/rss-aggregator/internal/database"
 	"io"
 	"log"
 	"net/http"
@@ -80,4 +82,49 @@ func urlToFeed(url string) (RssFeed, error) {
 
 	return feed, nil
 
+}
+
+func nullTimeToTimePtr(t sql.NullTime) *time.Time {
+	if t.Valid {
+		return &t.Time
+	}
+	return nil
+}
+
+// RESOPONSE HELPERS
+
+func createPostResponse(post database.FeedPost) PostResponse {
+	dat := PostResponse{
+		FeedPost: post,
+	}
+	if post.Description.Valid {
+		dat.Description = post.Description.String
+	}
+
+	return dat
+}
+
+func createPostsResponse(posts []database.FeedPost) []PostResponse {
+	res := make([]PostResponse, len(posts))
+
+	for i, post := range posts {
+		res[i] = createPostResponse(post)
+	}
+	return res
+}
+
+func createFeedResponse(feed database.Feed) FeedResponse {
+	return FeedResponse{
+		Feed:          feed,
+		LastFetchedAt: nullTimeToTimePtr(feed.LastFetchedAt),
+	}
+}
+
+func createFeedsResponse(feeds []database.Feed) []FeedResponse {
+	res := make([]FeedResponse, len(feeds))
+
+	for i, feed := range feeds {
+		res[i] = createFeedResponse(feed)
+	}
+	return res
 }

@@ -2,11 +2,8 @@ package main
 
 import (
 	"github.com/ihamzapped/rss-aggregator/internal/database"
+	"time"
 )
-
-type ErrResponse struct {
-	Error string `json:"error"`
-}
 
 type ApiConfig struct {
 	DB *database.Queries
@@ -27,4 +24,20 @@ type RSSItem struct {
 	Link        string `xml:"link"`
 	PubDate     string `xml:"pubDate"`
 	Description string `xml:"description"`
+}
+
+// RESOPONSE TYPES
+
+type ErrResponse struct {
+	Error string `json:"error"`
+}
+
+type PostResponse struct {
+	database.FeedPost
+	Description string `json:"description,omitempty"`
+}
+
+type FeedResponse struct {
+	database.Feed
+	LastFetchedAt *time.Time `json:"last_fetched_at,omitempty"`
 }
