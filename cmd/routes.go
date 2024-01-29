@@ -1,11 +1,15 @@
 package main
 
 import "github.com/go-chi/chi/v5"
+import "github.com/go-chi/chi/v5/middleware"
 
 func (api *ApiConfig) initRoutes() *chi.Mux {
 
 	router := chi.NewRouter()
 	v1router := chi.NewRouter()
+
+	router.Use(middleware.Logger)
+	router.Use(middleware.Recoverer)
 
 	v1router.Post("/users", api.handleCreateUser)
 	v1router.Get("/users", api.middlewareAuth(api.handleGetUser))
