@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -43,6 +44,17 @@ func (api *ApiConfig) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 
 func (api *ApiConfig) handleGetUser(w http.ResponseWriter, r *http.Request, user database.User) {
 	respond(w, http.StatusOK, user)
+}
+
+func (api *ApiConfig) handleGetAllUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := api.DB.GetAllUsers(context.Background())
+
+	if err != nil {
+		respondErr(w, http.StatusBadRequest, fmt.Sprintf("Could not fetch users: %v", err))
+		return
+	}
+
+	respond(w, http.StatusOK, users)
 }
 
 func (api *ApiConfig) handleCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {

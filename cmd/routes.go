@@ -10,9 +10,13 @@ func (api *ApiConfig) initRoutes() *chi.Mux {
 
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
+	router.Use(middleware.StripSlashes)
 
-	v1router.Post("/users", api.handleCreateUser)
-	v1router.Get("/users", api.middlewareAuth(api.handleGetUser))
+	v1router.Post("/user", api.handleCreateUser)
+	v1router.Get("/user", api.middlewareAuth(api.handleGetUser))
+
+	// For demo purposes
+	v1router.Get("/users", api.handleGetAllUsers)
 
 	v1router.Get("/feeds", api.handleGetAllFeeds)
 	v1router.Post("/feeds", api.middlewareAuth(api.handleCreateFeed))

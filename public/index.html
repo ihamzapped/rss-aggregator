@@ -3,9 +3,49 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <title>RSS Aggregator</title>
   </head>
   <body>
-    <h1>Hellow world</h1>
+    <div class="flex justify-center items-center min-h-screen min-w-screen">
+      <div class="flex justify-evenly">
+        <div>
+          <h2 class="text-2xl font-bold">Users:</h2>
+          <pre
+            id="users"
+            class="bg-blue-900 p-4 text-white rounded max-w-lg whitespace-pre-wrap overflow-scroll"
+          >
+  fetch
+  </pre
+          >
+        </div>
+        <div id="res"></div>
+        <div>
+          <form action="" method="post">
+            <div class="mb-4">
+              <label for="password" class="block text-gray-600">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
+                autocomplete="off"
+              />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const apiUrl = "http://localhost:8000/v1/";
+      (async () => {
+        const getUsers = await (await fetch(`${apiUrl}users`)).json();
+        const el = document.getElementById("users");
+
+        el.textContent = JSON.stringify(getUsers, null, 2);
+      })();
+    </script>
   </body>
 </html>
