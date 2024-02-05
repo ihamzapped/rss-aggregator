@@ -7,5 +7,4 @@ RETURNING *;
 SELECT feed_posts.* FROM feed_posts
 JOIN feed_follows ON feed_posts.feed_id = feed_follows.feed_id
 WHERE feed_follows.user_id = $1
-ORDER BY feed_posts.published_at DESC
-LIMIT $2;
+ORDER BY feed_posts.published_at DESC;

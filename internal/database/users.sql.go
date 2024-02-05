@@ -36,7 +36,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 }
 
 const getAllUsers = `-- name: GetAllUsers :many
-SELECT id, name, created_at, updated_at, api_key FROM users
+SELECT id, name, created_at, updated_at, api_key FROM users ORDER BY created_at DESC
 `
 
 func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {

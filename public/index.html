@@ -3,49 +3,88 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script defer src="./script.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-
     <title>RSS Aggregator</title>
   </head>
-  <body>
+  <body class="p-8">
     <div class="flex justify-center items-center min-h-screen min-w-screen">
-      <div class="flex justify-evenly">
-        <div>
+      <div id="login-screen" class="flex justify-evenly gap-x-8 flex-wrap">
+        <div class="max-w-lg">
           <h2 class="text-2xl font-bold">Users:</h2>
+          <br />
           <pre
             id="users"
-            class="bg-blue-900 p-4 text-white rounded max-w-lg whitespace-pre-wrap overflow-scroll"
+            class="bg-blue-900 p-4 text-white rounded-md max-h-96 whitespace-pre-wrap overflow-scroll"
           >
   fetch
   </pre
           >
         </div>
-        <div id="res"></div>
-        <div>
-          <form action="" method="post">
+        <div class="max-w-lg flex flex-col justify-center">
+          <h2 class="text-xl mb-6">
+            Fetch rss feeds for one of the default users or create a new one.
+          </h2>
+
+          <form onsubmit="login(event)" class="mb-4">
             <div class="mb-4">
-              <label for="password" class="block text-gray-600">Password</label>
+              <label for="password" class="block text-gray-600 mb-2"
+                >Api Key:</label
+              >
               <input
                 type="password"
-                id="password"
+                id="apiKey"
                 name="password"
                 class="border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
                 autocomplete="off"
+                required
               />
             </div>
+            <button
+              type="submit"
+              class="rounded-md px-4 py-2 bg-blue-800 text-white font-bold"
+            >
+              Submit
+            </button>
+          </form>
+
+          <form onsubmit="createUser(event)">
+            <div class="mb-4">
+              <label for="name" class="block text-gray-600 mb-2"
+                >Username:</label
+              >
+              <input
+                type="text"
+                id="username"
+                name="name"
+                class="border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
+                autocomplete="off"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              class="rounded-md px-4 py-2 bg-blue-800 text-white font-bold"
+            >
+              Submit
+            </button>
           </form>
         </div>
       </div>
+
+      <div id="main-screen" class="hidden">
+        <div id="feed"></div>
+      </div>
     </div>
 
-    <script>
-      const apiUrl = "http://localhost:8000/v1/";
-      (async () => {
-        const getUsers = await (await fetch(`${apiUrl}users`)).json();
-        const el = document.getElementById("users");
-
-        el.textContent = JSON.stringify(getUsers, null, 2);
-      })();
+    <script id="post-template" type="text/html">
+      <div>
+        <h2>{{ title }}</h2>
+        <p>{{ description }}</p>
+        <a href="{{ url }}" target="_blank">Read More</a>
+        <p>Created At: {{ createdAt }}</p>
+        <p>Updated At{{ updatedAt }}</p>
+      </div>
     </script>
   </body>
 </html>

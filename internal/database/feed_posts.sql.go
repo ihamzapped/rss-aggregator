@@ -45,16 +45,10 @@ SELECT feed_posts.id, feed_posts.title, feed_posts.description, feed_posts.url, 
 JOIN feed_follows ON feed_posts.feed_id = feed_follows.feed_id
 WHERE feed_follows.user_id = $1
 ORDER BY feed_posts.published_at DESC
-LIMIT $2
 `
 
-type GetPostsForUserParams struct {
-	UserID uuid.UUID `json:"user_id"`
-	Limit  int32     `json:"limit"`
-}
-
-func (q *Queries) GetPostsForUser(ctx context.Context, arg GetPostsForUserParams) ([]FeedPost, error) {
-	rows, err := q.db.QueryContext(ctx, getPostsForUser, arg.UserID, arg.Limit)
+func (q *Queries) GetPostsForUser(ctx context.Context, userID uuid.UUID) ([]FeedPost, error) {
+	rows, err := q.db.QueryContext(ctx, getPostsForUser, userID)
 	if err != nil {
 		return nil, err
 	}
