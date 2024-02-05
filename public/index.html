@@ -73,17 +73,24 @@
       </div>
 
       <div id="main-screen" class="hidden">
-        <div id="feed"></div>
+        <div>
+          <h1 class="text-4xl font-bold mb-4">Your Feed</h1>
+          <div
+            id="feed"
+            class="max-h-[800px] max-w-[70%] p-3 border border-black/40 rounded-lg overflow-y-scroll"
+          ></div>
+        </div>
       </div>
     </div>
 
     <script id="post-template" type="text/html">
-      <div>
-        <h2>{{ title }}</h2>
+      <div class="mb-4 space-y-2">
+        <h2 class="text-xl font-bold">{{ title }}</h2>
         <p>{{ description }}</p>
-        <a href="{{ url }}" target="_blank">Read More</a>
-        <p>Created At: {{ createdAt }}</p>
-        <p>Updated At{{ updatedAt }}</p>
+        <a href="{{ url }}" target="_blank" class="underline block"
+          >Read More...</a
+        >
+        <p>Published At: {{ publishedAt }}</p>
       </div>
     </script>
   </body>

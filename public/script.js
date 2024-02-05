@@ -14,10 +14,15 @@ const headers = {
 })();
 
 async function fetchUsers() {
-  const getUsers = await (await fetch(`${apiUrl}users`)).json();
-  const el = document.getElementById("users");
+  try {
+    const res = await fetch(`${apiUrl}users`);
+    const users = await res.json();
 
-  el.textContent = JSON.stringify(getUsers, null, 2);
+    const el = document.getElementById("users");
+    el.textContent = JSON.stringify(users, null, 2);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function login(e) {
@@ -25,14 +30,38 @@ async function login(e) {
 
   headers.Authorization = authPrefix + document.getElementById("apiKey").value;
 
+  fetchFeed();
+}
+
+async function fetchFeed() {
   try {
     const res = await fetch(`${apiUrl}user-feeds`, {
       method: "GET",
       headers,
     });
-    const result = await res.json();
-    console.log(result);
-    setFeed(result);
+
+    if (!res.ok) await throwResErr(res);
+
+    const postsArray = await res.json();
+    console.log(postsArray);
+
+    const loginScreen = document.getElementById("login-screen");
+    const mainScreen = document.getElementById("main-screen");
+    const feed = document.getElementById("feed");
+    const template = document.getElementById("post-template").innerHTML;
+    loginScreen.classList.add("hidden");
+    mainScreen.classList.remove("hidden");
+
+    for (const post of postsArray) {
+      const html = renderTemplate(template, {
+        title: post?.title,
+        description: post?.description,
+        url: post?.url,
+        publishedAt: post?.published_at,
+      });
+
+      feed.innerHTML += html;
+    }
   } catch (error) {
     console.log(error);
   }
@@ -58,29 +87,25 @@ async function createUser(e) {
   }
 }
 
-function setFeed(postsArray) {
-  const loginScreen = document.getElementById("login-screen");
-  const mainScreen = document.getElementById("main-screen");
-  const feed = document.getElementById("feed");
-  const template = document.getElementById("post-template").innerHTML;
-  loginScreen.classList.add("hidden");
-  mainScreen.classList.remove("hidden");
-
-  for (const post of postsArray) {
-    const html = renderTemplate(template, {
-      title: post?.title,
-      description: post?.description,
-      url: post?.url,
-      updatedAt: post?.updated_at,
-      createdAt: post?.created_at,
-    });
-
-    feed.innerHTML += html;
-  }
-}
+// UTILITIES
 
 function renderTemplate(template, data) {
   return template.replace(/{{\s*([a-zA-Z0-9_]+)\s*}}/g, function (match, p1) {
     return data[p1] || match;
   });
+}
+
+async function throwResErr(res) {
+  const err = {
+    status: res.status,
+    statusText: res.statusText,
+    ...(await res.json()),
+  };
+
+  alertObj(err);
+  throw err;
+}
+
+function alertObj(obj) {
+  alert(JSON.stringify(obj, null, 2));
 }
